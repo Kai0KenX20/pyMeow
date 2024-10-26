@@ -18,6 +18,13 @@ jobs:
       - name: Install Nim
         run: |
           choco install nim -y
+          echo "## Adding Nim and Nimble to PATH"
+          $env:PATH += ";$($env:USERPROFILE)\scoop\apps\nim\current\bin"
+
+      - name: Verify Nim and Nimble installation
+        run: |
+          nim --version
+          nimble --version
 
       - name: Install Nim requirements
         run: |
