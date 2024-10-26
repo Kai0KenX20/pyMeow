@@ -11,25 +11,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x' # Specify the required Python version
-
-      - name: Install dependencies
+      - name: Install Git
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          choco install git -y
 
-      - name: Build project
+      - name: Install Nim
         run: |
-          python setup.py sdist bdist_wheel
+          choco install nim -y
+
+      - name: Install Nim requirements
+        run: |
+          nimble install -y nimpy nimraylib_now x11 winim
+
+      - name: Compile Project
+        run: |
+          nim c pyMeow.nim
 
       - name: Upload release assets
         uses: actions/upload-artifact@v3
         with:
           name: release-assets
-          path: dist/*.tar.gz
+          path: pyMeow.exe # Replace with correct executable path if needed
 
   release:
     needs: build
@@ -45,7 +47,7 @@ jobs:
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "dist/*.tar.gz"
+          artifacts: "dist/pyMeow.exe" # Replace with correct executable path if needed
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
